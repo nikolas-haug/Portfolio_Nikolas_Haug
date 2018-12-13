@@ -108,6 +108,53 @@ $(document).ready(function () {
         }
       };
 
+      // function to check the number of scroll events for performance
+        // adjust the 'wait' to increase or decrease the time images take to animate
+        function debounce(func, wait = 10, immediate = true) {
+            var timeout;
+            return function() {
+            var context = this, args = arguments;
+            var later = function() {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            };
+            var callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
+            };
+        }
+
+        const animatedImages = document.querySelectorAll('.animate-image');
+
+        function checkSlide(e) {
+            // console.log(e);
+            // console.count(e);
+            // console.log(window.scrollY + window.innerHeight);
+            animatedImages.forEach(sliderImage => {
+                // half way through the image
+                const slideInAt = (window.scrollY + window.innerHeight) - sliderImage.height / 2;
+                console.log(slideInAt);
+                // bottom of the image
+                const imageBottom = sliderImage.offsetTop + sliderImage.height;
+                console.log(imageBottom);
+                // check if image is half shown
+                const isHalfShown = slideInAt > sliderImage.offsetTop;
+                console.log(isHalfShown);
+                // check if scrolled past image
+                const isNotScrolledPast = window.scrollY < imageBottom;
+                console.log(isNotScrolledPast);
+    
+                if(isHalfShown && isNotScrolledPast) {
+                    sliderImage.classList.add('active');
+                } else {
+                    sliderImage.classList.remove('active');
+                }
+            });
+        }
+    
+        window.addEventListener('scroll', debounce(checkSlide));
+
     //   $('#projects-display').hide();
 
     //   // portfolio section
